@@ -1,0 +1,13 @@
+version: '3'
+services:
+  bitbot_langgraph:
+    build: .
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+    environment:
+      - SQLITE_DB_PATH=/app/sqlite.db
+    volumes:
+      - .:/app
+    command: poetry run python src/bitbot_langgraph/main.py

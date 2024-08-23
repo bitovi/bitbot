@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "bitbot"
+name = "bitbot_langgraph"
 version = "0.1.0"
 description = "bitbot using langgraph"
 authors = ["Mick McGrath <mick@bitovi.com>"]
@@ -19,7 +19,7 @@ aiosqlite = "^0.20.0"
 langgraph-checkpoint-sqlite = "^1.0.0"
 
 [tool.poetry.scripts]
-bitbot = "bitbot.main:main"
+bitbot_langgraph = "bitbot.main:main"
 
 [build-system]
 requires = ["poetry-core"]

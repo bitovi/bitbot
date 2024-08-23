@@ -1,0 +1,15 @@
+name: Deploy Ollama
+on:
+  push:
+    branches: [ slack ]
+
+jobs:
+  EC2-Deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - id: deploy
+      name: Deploy
+      uses: bitovi/github-actions-deploy-ollama@0.1.0
+      with:
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID_AI}}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_AI}}

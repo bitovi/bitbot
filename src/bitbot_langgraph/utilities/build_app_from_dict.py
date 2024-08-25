@@ -1,5 +1,11 @@
 from typing import Annotated, List, TypedDict, Dict, Tuple, Union, Literal, Optional
 from langgraph.graph import START, END, StateGraph, MessagesState
+from langgraph.pregel import RetryPolicy
+# set up logging
+import logging
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+
 
 # this function iterates a dict and generates a langgraph graph from it
 # here is an example dict:
@@ -41,13 +47,38 @@ from langgraph.graph import START, END, StateGraph, MessagesState
 #     should_end,
 #     { "agent": "agent", "__end__": "concat_steps_to_lesson" }
 # )
-def build_app_from_dict(app_dict: dict, state: dict, checkpointer=None):
+def build_app_from_dict(app_dict: dict, state: dict, checkpointer=None, logger=None):
     """Build a graph from a dict."""
+    logger = logger or logging.getLogger(__name__)
+
 
     workflow = StateGraph(state)
 
     for node_name, node_func in app_dict["nodes"].items():
-        workflow.add_node(node_name, node_func)
+        retry = None
+        max_attempts = None
+        logger.info("")
+        logger.info("----------------")
+        logger.info(f"node_name: {node_name}")
+        if isinstance(node_func, dict):
+            logger.info(f"node_func is dict: {node_func}")
+            if not node_func.get("node"):
+                raise ValueError("The node must be defined")
+
+            retry = node_func.get("retry")
+            if retry:
+                max_attempts = retry.get("max_attempts")
+                if max_attempts:
+                    logger.info(f"max_attempts: {max_attempts}")
+                    workflow.add_node(node_name, node_func["node"], retry=RetryPolicy(max_attempts=max_attempts))
+                else:
+                    logger.info(f"max_attempts not found, add standard node")
+                    workflow.add_node(node_name, node_func)
+
+
+        else:
+            logger.info(f"node_func is not dict: {node_func}")
+            workflow.add_node(node_name, node_func)    
 
     for start_node, end_node in app_dict["edges"].items():
         workflow.add_edge(start_node, end_node)

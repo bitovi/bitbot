@@ -50,10 +50,10 @@ wikipedia_tool = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
 # json_search_tool = JSONSearchTool()
 # file_append_tool = FileAppendTool()
 
-tools = [python_repl, create_outline, read_document, write_document, edit_document, scrape_webpages, duckduckgo_tool, wikipedia_tool]
-
+research_tools = [scrape_webpages, duckduckgo_tool, wikipedia_tool]
+file_tools = [create_outline, read_document, write_document, edit_document]
 # all but the first item of tools
-tools_without_python = tools[1:]
+programmer_tools = [python_repl]
 
 
 class Step(BaseStep):
@@ -104,7 +104,7 @@ You are tasked with executing step:
 
         logger.info(f"executor prompt_template: {self.prompt_template}")
         llm = ChatOpenAI(model=model_name, temperature=0)
-        self._runnable = create_react_agent(llm, tools_without_python, state_modifier=self.prompt_template)
+        self._runnable = create_react_agent(llm, research_tools, state_modifier=self.prompt_template)
 
     async def node(self, state: dict):
         logger = self.logger

@@ -110,16 +110,22 @@ async def _run_plan_and_execute():
     Starting location is Kingsport, TN
     When you don't have the information you need, ask me.
     """
+
+
+    input_query = """
+    make a lesson on intro to music theory. include examples and exercises.
+    thoroughly describe the theory. start at middle c.
+    """    
     inputs = { "input": input_query }
     # config = { "recursion_limit": 50, "configurable": {"thread_id": "2"} }
     auto_threading = True
     thread_id = str(int(time.time())) # uncomment for auto threading
 
     # custom thread stuff
-    # thread_id = "1724340719"
+    # thread_id = "1724568922"
     # inputs = { 
     #     "input": (
-    #         "make the list"
+    #         "proceed"
     #     )
     # }
     

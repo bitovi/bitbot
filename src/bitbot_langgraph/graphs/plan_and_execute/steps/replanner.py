@@ -1,5 +1,5 @@
 from typing import List, Optional, Union
-from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.pydantic_v1 import BaseModel, Field, root_validator
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from bitbot_langgraph.graphs.plan_and_execute.steps.base_step import BaseStep
@@ -13,7 +13,12 @@ logging.basicConfig(level=logging.INFO)
 
 class Response(BaseModel):
     """Response to user."""
-    response: str
+    response: str = Field(
+        description="Response to user."
+    )
+    Response: Optional[str] = Field(
+        description="Response to user. use `response` instead."
+    )
 
 class Plan(BaseModel):
     """Plan to follow in the future."""

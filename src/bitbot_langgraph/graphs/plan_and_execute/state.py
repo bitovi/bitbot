@@ -7,3 +7,5 @@ class State(TypedDict):
     original_plan: List[str]
     past_steps: Annotated[List[Tuple], operator.add]
     response: Optional[str]
+    final_markdown: str
+    response_is_final: bool

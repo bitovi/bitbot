@@ -1,5 +1,5 @@
+from langgraph.graph import START, END
 from typing import Literal
-from langgraph.graph import START, END, StateGraph, MessagesState
 
 # set up logging
 import logging
@@ -22,6 +22,9 @@ from bitbot_langgraph.graphs.plan_and_execute.steps.replanner import (
 from bitbot_langgraph.graphs.plan_and_execute.steps.executor import (
     Step as ExecutorStep
 )
+from bitbot_langgraph.graphs.plan_and_execute.steps.response_formatter import (
+    Step as ResponseFormatterStep
+)
 
 
 
@@ -36,9 +39,9 @@ def make_graph(logger=None, memory=None):
 
 
     # conditional edge methods
-    def should_end(state: State) -> Literal["agent", "__end__"]:
+    def should_end(state: State) -> Literal["agent", "format"]:
         if "response" in state and state["response"]:
-            return "__end__"
+            return "format"
         else:
             return "agent"
 
@@ -48,17 +51,29 @@ def make_graph(logger=None, memory=None):
         "nodes": {
             "planner": PlanStep(logger, model_name="gpt-4o").node,
             "agent": ExecutorStep(logger, model_name="gpt-4o").node,
-            "replan": ReplannerStep(logger, model_name="gpt-4o").node
+            # TODO: new node for deciding whether to replan or send the response
+            "replan": {
+                "node": ReplannerStep(logger, model_name="gpt-4o").node,
+                "retry": {
+                    "max_attempts": 5
+                }
+            },
+
+            # new node for generating a final response
+            "format_response": ResponseFormatterStep(logger).node,
+
+            # TODO: new node for sending the final response to slack
         },
         "edges": {
             START: "planner",
             "planner": "agent",
-            "agent": "replan"
+            "agent": "replan",
+            "format_response": END
         },
         "conditional_edges": {
             "replan": {
                 "function": should_end,
-                "mapping": { "agent": "agent", "__end__": END }
+                "mapping": { "agent": "agent", "format": "format_response" }
             }
         }
-    }, State, checkpointer=memory)
+    }, State, checkpointer=memory, logger=logger)

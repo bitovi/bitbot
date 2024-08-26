@@ -25,6 +25,12 @@ from bitbot_langgraph.graphs.plan_and_execute.steps.executor import (
 from bitbot_langgraph.graphs.plan_and_execute.steps.response_formatter import (
     Step as ResponseFormatterStep
 )
+from bitbot_langgraph.graphs.plan_and_execute.steps.plan_or_response import (
+    Step as PlanOrResponseStep
+)
+from bitbot_langgraph.graphs.plan_and_execute.steps.slack_send_message import (
+    Step as SlackSendMessageStep
+)
 
 
 
@@ -39,11 +45,11 @@ def make_graph(logger=None, memory=None):
 
 
     # conditional edge methods
-    def should_end(state: State) -> Literal["agent", "format"]:
+    def should_end(state: State) -> Literal["plan", "respond"]:
         if "response" in state and state["response"]:
-            return "format"
+            return "respond"
         else:
-            return "agent"
+            return "plan"
 
 
 
@@ -51,7 +57,8 @@ def make_graph(logger=None, memory=None):
         "nodes": {
             "planner": PlanStep(logger, model_name="gpt-4o").node,
             "agent": ExecutorStep(logger, model_name="gpt-4o").node,
-            # TODO: new node for deciding whether to replan or send the response
+            #  node for deciding whether to replan or send the response
+            "plan_or_response": PlanOrResponseStep(logger, model_name="dwightfoster03/functionary-small-v3.1:latest").node,
             "replan": {
                 "node": ReplannerStep(logger, model_name="gpt-4o").node,
                 "retry": {
@@ -62,18 +69,21 @@ def make_graph(logger=None, memory=None):
             # new node for generating a final response
             "format_response": ResponseFormatterStep(logger).node,
 
-            # TODO: new node for sending the final response to slack
+            # node for sending the final response to slack
+            "slack_send_message": SlackSendMessageStep(logger).node
         },
         "edges": {
             START: "planner",
             "planner": "agent",
-            "agent": "replan",
-            "format_response": END
+            "replan": "agent",
+            "agent": "plan_or_response",
+            "format_response": "slack_send_message",
+            "slack_send_message": END
         },
         "conditional_edges": {
-            "replan": {
+            "plan_or_response": {
                 "function": should_end,
-                "mapping": { "agent": "agent", "format": "format_response" }
+                "mapping": { "plan": "replan", "respond": "format_response" }
             }
         }
     }, State, checkpointer=memory, logger=logger)

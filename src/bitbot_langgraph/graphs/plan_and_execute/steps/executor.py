@@ -11,6 +11,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 from bitbot_langgraph.graphs.plan_and_execute.steps.base_step import BaseStep
+from bitbot_langgraph.graphs.plan_and_execute.utilities import get_past_steps_from_state
 
 
 
@@ -153,26 +154,15 @@ You are tasked with executing step:
 
         inputs_past_steps = state.get("past_steps", [])
         if not inputs_past_steps or len(inputs_past_steps) == 0:
-            logger.info("No past steps provided to executor")
+            logger.debug("No past steps provided to executor")
         else:
-            logger.info(f"inputs_past_steps: {inputs_past_steps}")
+            logger.debug(f"inputs_past_steps: {inputs_past_steps}")
 
             # append past steps to messages
-            past_steps_human = []
-            for step in inputs_past_steps:
-                # if the step is a tuple, concatenate the two strings
-                # assume lists of 2 are tuples
-                if isinstance(step, tuple) or (isinstance(step, list) and len(step) == 2):
-                    past_steps_human.append(HumanMessage(content=f"{step[0]}: {step[1]}"))
-                elif isinstance(step, str):
-                    past_steps_human.append(HumanMessage(content=step))
-                elif isinstance(step, dict):
-                    past_steps_human.append(HumanMessage(content=step["content"]))
-                    
-            
-            logger.info(f"past_steps_human: {past_steps_human}")
+            past_steps = get_past_steps_from_state(state, logger)
+            logger.debug(f"past_steps_human: {past_steps}")
             prompt_past_steps = self.prompt_template_past_steps.format(
-                past_steps=past_steps_human
+                past_steps=past_steps
             )
             core_messages.append(("user", prompt_past_steps))
 
@@ -225,95 +215,3 @@ You are tasked with executing step:
         return {
             "past_steps": [(task, agent_response["messages"][-1].content)]
         }
-
-    async def node_bak(self, state: dict):
-        logger = self.logger
-        logger.info(f"execute executor step")
-        logger.debug(f"execute step: {state}")
-        plan = state["plan"]
-        plan_str = "\n".join(f"{i+1}. {step}" for i, step in enumerate(plan))
-        task = plan[0]
-        task_formatted = (
-            f"For the following plan:"
-            f"\n{plan_str}"
-            f"\n\nYou are tasked with executing step: {1}, {task}."
-        )
-
-
-
-
-        logger.info("")
-        logger.info("")
-        logger.info("")
-        logger.info("")
-        logger.info("")
-        logger.info("")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("====================================")
-        logger.info("")
-        logger.info("====================================")
-
-        inputs_input = state.get("input")
-        if not inputs_input:
-            raise ValueError("No input provided to executor")
-        
-        inputs_plan = state.get("plan")
-        if not inputs_plan:
-            logger.info("No plan provided to executor")
-        else:
-            logger.info(f"inputs_plan: {inputs_plan}") 
-
-        inputs_past_steps = state.get("past_steps", [])
-        if not inputs_past_steps or len(inputs_past_steps) == 0:
-            logger.info("No past steps provided to executor")
-        else:
-            logger.info(f"inputs_past_steps: {inputs_past_steps}")
-
-
-        input_messages = state.get("messages", [])
-        if not input_messages:
-            logger.info("No input messages provided to executor")
-
-
-        logger.info(f"inputs_input: {inputs_input}")
-
-        # append past steps to messages
-        past_steps_human = []
-        for step in inputs_past_steps:
-            # if the step is a tuple, concatenate the two strings
-            if isinstance(step, tuple):
-                past_steps_human.append(HumanMessage(content=f"{step[0]}: {step[1]}"))
-            elif isinstance(step, str):
-                past_steps_human.append(HumanMessage(content=step))
-        
-
-        # input_messages.extend(past_steps_human)
-
-        logger.info("")
-        logger.info("")
-        logger.info("")
-        logger.info("")
-        input_dict = {
-            "input": inputs_input,
-            "past_steps": past_steps_human,
-            "messages": input_messages
-        }
-        logger.debug(f"input_dict: {input_dict}")
-        agent_response = await self._runnable.ainvoke(input_dict)
-        logger.debug(f"agent_response: {agent_response}")
-
-        return {
-            "past_steps": [(task, agent_response["messages"][-1].content)]
-        }
-

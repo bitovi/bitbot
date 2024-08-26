@@ -93,50 +93,39 @@ async def _run_teams():
     # logger.info(f"final_message_usage_metadata: {final_message_usage_metadata}")
     logger.info("==============================")
 
-async def _run_plan_and_execute():
+async def _run_plan_and_execute(query, thread_id=None):
     logger.info("main.py _run_plan_and_execute")
-
-
-    input_query = """
-    plan a trip to vermont in september. 
-    it should be for 2 weeks.
-    we'll be driving and camping.
-    We'll be driving a camper van.
-    we like hiking. we have 3 kids (6, 3, and 0), and we will not be able to go on long hikes (a few miles at most).
-    We'll be driving a little ways (max 7h at a time) and then stopping at an airBnB for monday through thursday.
-    We can drive further on friday and saturday and camp on the weekends, too.
-    You do not have access to a human to ask questions. You must use your best judgement.
-    Fridays are preferable for travel days (though not the only days for travel)
-    Starting location is Kingsport, TN
-    When you don't have the information you need, ask me.
-    """
-
-
-    input_query = """
-    make a lesson on intro to music theory. include examples and exercises.
-    thoroughly describe the theory. start at middle c.
-    """    
-    inputs = { "input": input_query }
-    # config = { "recursion_limit": 50, "configurable": {"thread_id": "2"} }
-    auto_threading = True
-    thread_id = str(int(time.time())) # uncomment for auto threading
-
-    # custom thread stuff
-    # thread_id = "1724568922"
-    # inputs = { 
-    #     "input": (
-    #         "proceed"
-    #     )
-    # }
-    
-    logger.info(f"thread_id: {thread_id}")
-    config = { "recursion_limit": 100, "configurable": {"thread_id": thread_id} }
-        # mempath from env var: SQLITE_DB_PATH
+    logger.info(f"query: {query}")
+    # mempath from env var: SQLITE_DB_PATH
     mempath = os.getenv("SQLITE_DB_PATH", "checkpoints.sqlite")
-    # logger.info(f"mempath: {mempath}")
-    # conn = sqlite3.connect(mempath)
-    # memory = SqliteSaver(conn)
- 
+
+
+    # input_query = """
+    # plan a trip to vermont in september. 
+    # it should be for 2 weeks.
+    # we'll be driving and camping.
+    # We'll be driving a camper van.
+    # we like hiking. we have 3 kids (6, 3, and 0), and we will not be able to go on long hikes (a few miles at most).
+    # We'll be driving a little ways (max 7h at a time) and then stopping at an airBnB for monday through thursday.
+    # We can drive further on friday and saturday and camp on the weekends, too.
+    # You do not have access to a human to ask questions. You must use your best judgement.
+    # Fridays are preferable for travel days (though not the only days for travel)
+    # Starting location is Kingsport, TN
+    # When you don't have the information you need, ask me.
+    # """
+
+
+    input_query = """
+    how many U.S. gold medalists in 2024?
+    """    
+
+
+
+    if query:
+        input_query = query
+    
+    inputs = { "input": input_query }
+    config = { "recursion_limit": 100, "configurable": {"thread_id": thread_id} }
     async with aiosqlite.connect(mempath) as conn:
         memory = AsyncSqliteSaver(conn)
         results = await plan_and_execute_run(inputs, output_graph=True, config=config, memory=memory)
@@ -156,9 +145,23 @@ async def _run_plan_and_execute():
 async def _main():
     logger.info("main.py main")
 
+
+    # generate thread id
+    thread_id = str(int(time.time()))
+    # thread_id = "1724649395"
+
     # await _run_collab()
     # await _run_teams()
-    await _run_plan_and_execute()
+    while True:
+        # get input from user
+        logger.info(f"thread_id: {thread_id}")
+        query = input("Enter a query: ")
+
+        try:
+            results = await _run_plan_and_execute(query, thread_id)
+            logger.info(f"results: {results}")
+        except Exception as e:
+            logger.error(f"Caught Error in outer loop: {e}")
 
 
 def main():

@@ -44,7 +44,7 @@ async def run(inputs=default_inputs, logger=None, output_graph=False, config=def
     # run apps["super_graph"]
     logger.info(f"running graph for super_graph")
 
-    await run_graph(
+    return await run_graph(
         app,
         inputs,
         config,

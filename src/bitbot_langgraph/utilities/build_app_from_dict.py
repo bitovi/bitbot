@@ -61,7 +61,7 @@ def build_app_from_dict(app_dict: dict, state: dict, checkpointer=None, logger=N
         logger.info("----------------")
         logger.info(f"node_name: {node_name}")
         if isinstance(node_func, dict):
-            logger.info(f"node_func is dict: {node_func}")
+            # logger.info(f"node_func is dict: {node_func}")
             if not node_func.get("node"):
                 raise ValueError("The node must be defined")
 
@@ -77,7 +77,7 @@ def build_app_from_dict(app_dict: dict, state: dict, checkpointer=None, logger=N
 
 
         else:
-            logger.info(f"node_func is not dict: {node_func}")
+            logger.info(f"node_func is not dict")
             workflow.add_node(node_name, node_func)    
 
     for start_node, end_node in app_dict["edges"].items():

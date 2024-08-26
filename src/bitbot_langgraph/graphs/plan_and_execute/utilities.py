@@ -94,3 +94,26 @@ def create_team_supervisor(llm: ChatOpenAI, system_prompt, members) -> str:
         | llm.bind_functions(functions=[function_def], function_call="route")
         | JsonOutputFunctionsParser()
     )
+
+def get_past_steps_from_state(state, logger):
+    past_steps = []
+    if "past_steps" in state:
+        logger.debug("past_steps found in state")
+        past_steps = state["past_steps"]
+    else:
+        logger.debug("past_steps not found in state")
+        return past_steps
+
+    # past steps is a list of tuples, so we need to convert them to HumanMessage objects
+    past_steps_human = []
+    for step in past_steps:
+        # if the step is a tuple, concatenate the two strings
+        # assume lists of 2 are tuples
+        if isinstance(step, tuple) or (isinstance(step, list) and len(step) == 2):
+            past_steps_human.append(HumanMessage(content=f"{step[0]}: {step[1]}"))
+        elif isinstance(step, str):
+            past_steps_human.append(HumanMessage(content=step))
+        elif isinstance(step, dict):
+            past_steps_human.append(HumanMessage(content=step["content"]))
+
+    return past_steps_human

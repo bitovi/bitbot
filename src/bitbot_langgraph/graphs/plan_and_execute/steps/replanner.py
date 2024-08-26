@@ -10,28 +10,9 @@ import logging
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
-
-class Response(BaseModel):
-    """Response to user."""
-    response: str = Field(
-        description="Response to user."
-    )
-    Response: Optional[str] = Field(
-        description="Response to user. use `response` instead."
-    )
-
-class Plan(BaseModel):
-    """Plan to follow in the future."""
+class Model(BaseModel):
     steps: List[str] = Field(
         description="Different steps to follow, should be in sorted order."
-    )
-
-class Model(BaseModel):
-    """Action to perform."""
-    action: Union[Response, Plan] = Field(
-        description="Action to perform. If you want to respond to user, use Response. "
-                    "If you need information from the user, use Response."
-                    "If you need to further use tools to get the answer, use Plan."
     )
 
 
@@ -61,8 +42,8 @@ class Step(BaseStep):
     {past_steps}
     ---
     Update your plan accordingly.
-    If no more steps are needed and you can return to the user, then provide a final response.
-    if you need to ask the user a question, use that as the response instead of providing steps so they can provide the necessary information.
+    If no more steps are needed and you can add a final step to return to the user.
+    if you need to ask the user a question, add a step to generate the question.
     Otherwise, fill out the plan.
     """
 
@@ -76,8 +57,10 @@ class Step(BaseStep):
         self.logger.info(f"replan step")
         output = await self._runnable.ainvoke(state)
 
-        self.logger.debug("replan output: ", output)
-        if isinstance(output.action, Response):
-            return {"response": output.action.response}
-        else:
-            return {"plan": output.action.steps}
+        self.logger.info("replan output: ", output)
+
+        # if steps are present, return them as the plan
+        if hasattr(output, "steps"):
+            return {"plan": output.steps}
+        # if no steps are present, return a step to notify the user
+        return {"response": "No steps were provided. Please provide a plan."}

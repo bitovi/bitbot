@@ -37,10 +37,17 @@ def run_graph_sync(app, inputs, config, logger=None, stream_mode="values", input
         logger.debug("=========")
         logger.debug("=========")
 
+        ret = None
         for k, v in event.items():
             if k != "__end__":
                 logger.info(v)
                 logger.info("=========")
+            else:
+                logger.info("END")
+                logger.info("=========")
+                logger.info(v)
+                ret = v
+        return ret
 
 
 async def run_graph(app, inputs, config, logger=None, stream_mode="values", input_transformer=transform_inputs):
@@ -72,6 +79,9 @@ async def run_graph(app, inputs, config, logger=None, stream_mode="values", inpu
         # output all but the messages first
         for k, v in event.items():
             if k != "__end__" and k != "messages":
+                logger.info(v)
+            if k == "__end__":
+                logger.info("==END==")
                 logger.info(v)
 
 

@@ -6,6 +6,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 
 from bitbot_langgraph.graphs.plan_and_execute.steps.base_step import BaseStep
+from bitbot_langgraph.graphs.plan_and_execute.utilities import get_past_steps_from_state
 
 # set up logging
 import logging
@@ -74,28 +75,8 @@ class Step(BaseStep):
         else:
             self.logger.info("response not found in state")
 
-
-        past_steps = []
-        if "past_steps" in state:
-            self.logger.info("past_steps found in state")
-            past_steps = state["past_steps"]
-        else:
-            self.logger.info("past_steps not found in state")
-
-        # messages_human = [HumanMessage(content=message) for message in messages]
         query_human = [HumanMessage(content=query)]
-
-        # past steps is a list of tuples, so we need to convert them to HumanMessage objects
-        past_steps_human = []
-        for step in past_steps:
-            # if the step is a tuple, concatenate the two strings
-            # assume lists of 2 are tuples
-            if isinstance(step, tuple) or (isinstance(step, list) and len(step) == 2):
-                past_steps_human.append(HumanMessage(content=f"{step[0]}: {step[1]}"))
-            elif isinstance(step, str):
-                past_steps_human.append(HumanMessage(content=step))
-            elif isinstance(step, dict):
-                past_steps_human.append(HumanMessage(content=step["content"]))
+        past_steps = get_past_steps_from_state(state, self.logger)
 
         original_plan = []
         if "original_plan" in state:
@@ -105,19 +86,15 @@ class Step(BaseStep):
             self.logger.info("original_plan not found in state")
 
 
-        # self.logger.info(f"messages: {messages}")
-        # self.logger.info(f"messages_human: {messages_human}")
-        self.logger.info(f"query: {query}")
-        self.logger.info(f"query_human: {query_human}")
-        self.logger.info(f"past_steps: {past_steps}")
-        self.logger.info(f"past_steps_human: {past_steps_human}")
-        self.logger.info(f"response: {response}")
-        self.logger.info(f"original_plan: {original_plan}")
+        # self.logger.info(f"query: {query}")
+        # self.logger.info(f"query_human: {query_human}")
+        # self.logger.info(f"past_steps: {past_steps}")
+        # self.logger.info(f"response: {response}")
+        # self.logger.info(f"original_plan: {original_plan}")
 
         input_data = {
-            # "messages": messages_human,
             "query": query_human,
-            "past_steps": past_steps_human,
+            "past_steps": past_steps,
             "response": response,
             "original_plan": original_plan
         }

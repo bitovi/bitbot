@@ -14,3 +14,4 @@ jobs:
         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID_AI}}
         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_AI}}
         aws_default_region: us-east-2
+        tf_stack_destroy: true

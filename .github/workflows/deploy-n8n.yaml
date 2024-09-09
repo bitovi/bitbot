@@ -20,7 +20,6 @@ jobs:
           aws_r53_enable: true
           aws_r53_domain_name: bitovi-ai.com
           aws_r53_sub_domain_name: n8n
-          aws_r53_create_sub_cert: true
 
           aws_elb_app_port: 5678
           aws_elb_healthcheck: "HTTP:5678"  # ?

@@ -8,7 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: deploy
-        uses: bitovi/github-actions-deploy-docker-to-ec2@v1.0.1
+        uses: bitovi/github-actions-deploy-docker-to-ec2@root_cert_fix
+        # uses: bitovi/github-actions-deploy-docker-to-ec2@v1.0.1
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID_AI }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_AI }}
@@ -20,7 +21,7 @@ jobs:
           aws_r53_enable: true
           aws_r53_domain_name: bitovi-ai.com
           aws_r53_sub_domain_name: n8n
-        #   aws_r53_enable_cert: true
+          aws_r53_enable_cert: true
           aws_r53_create_root_cert: true
 
           aws_elb_app_port: 5678

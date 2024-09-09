@@ -59,6 +59,8 @@ def make_graph(logger=None, memory=None):
             "agent": ExecutorStep(logger, model_name="gpt-4o").node,
             #  node for deciding whether to replan or send the response
             "plan_or_response": PlanOrResponseStep(logger, model_name="dwightfoster03/functionary-small-v3.1:latest").node,
+            # "plan_or_response": PlanOrResponseStep(logger, model_name="lm_studio").node,
+            # "plan_or_response": PlanOrResponseStep(logger).node,
             "replan": {
                 "node": ReplannerStep(logger, model_name="gpt-4o").node,
                 "retry": {
@@ -67,7 +69,7 @@ def make_graph(logger=None, memory=None):
             },
 
             # new node for generating a final response
-            "format_response": ResponseFormatterStep(logger).node,
+            "format_response": ResponseFormatterStep(logger, model_name="gpt-4o").node,
 
             # node for sending the final response to slack
             "slack_send_message": SlackSendMessageStep(logger).node

@@ -18,6 +18,7 @@ pysqlite3 = "^0.5.3"
 aiosqlite = "^0.20.0"
 langgraph-checkpoint-sqlite = "^1.0.0"
 slack-sdk = "^3.31.0"
+slack-bolt = "^1.20.1"
 
 [tool.poetry.scripts]
 bitbot_langgraph = "bitbot.main:main"

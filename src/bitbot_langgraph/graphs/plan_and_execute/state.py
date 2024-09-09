@@ -3,6 +3,7 @@ from typing import Annotated, List, TypedDict, Dict, Tuple, Optional
 
 class State(TypedDict):
     input: str
+    thread_id: str
     plan: List[str]
     original_plan: List[str]
     past_steps: Annotated[List[Tuple], operator.add]

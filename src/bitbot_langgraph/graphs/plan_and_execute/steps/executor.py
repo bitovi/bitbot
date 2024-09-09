@@ -103,7 +103,6 @@ You are tasked with executing step:
         self.prompt_template_past_steps = PromptTemplate.from_template(self._prompt_template_past_steps_text)
         self.prompt_template_original_input = PromptTemplate.from_template(self._prompt_template_original_input)
 
-        logger.info(f"executor prompt_template: {self.prompt_template}")
         llm = ChatOpenAI(model=model_name, temperature=0)
         self._runnable = create_react_agent(llm, research_tools, state_modifier=self.prompt_template)
 

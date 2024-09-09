@@ -32,10 +32,21 @@ class Step(BaseStep):
             raise ValueError("No response provided to slack poster")
         
         logger.info(f"response: {response}")
-        try:
-            response = self.client.chat_postMessage(channel='#bitbot-testing', text=response.content)
-        except SlackApiError as e:
-            logger.error(f"Error posting message: {e}")
+
+        thread_id = state.get("thread_id")
+        logger.info(f"slack_send_message - thread_id: {thread_id}")
+        txt = response.content
+        
+        if thread_id:
+            try:
+                response = self.client.chat_postMessage(channel='#bitbot-testing', text=txt, thread_ts=thread_id, mrkdwn=True)
+            except SlackApiError as e:
+                logger.error(f"Error posting message to thread: {e}")
+        else:
+            try:
+                response = self.client.chat_postMessage(channel='#bitbot-testing', text=txt, mrkdwn=True)
+            except SlackApiError as e:
+                logger.error(f"Error posting message: {e}")
 
         return {
             "response": None

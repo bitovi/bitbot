@@ -24,7 +24,9 @@ class Model(BaseModel):
 class Step(BaseStep):
     Model = Model
     prompt_template = """
-    Convert these steps into a clean markdown file.  Each step should have a meaningful section title.
+    Convert these steps into richly formatted slack markdown. 
+    start with a quick summary at the beginning along with any relevant context for the user (from past steps, for example).
+    Then provide the markdown to convey the response/question.
     ---
     {past_steps}
     ---
@@ -43,6 +45,22 @@ class Step(BaseStep):
     this was the most recent query
     ---
     {query}
+    ---
+
+    here are some rules to follow when generating markdown:
+    ---
+    1. *Bold*: Use `*` around text (e.g., `*bold*`).
+    2. _Italic_: Use `_` around text (e.g., `_italic_`).
+    3. ~Strikethrough~: Use `~` around text (e.g., `~strikethrough~`).
+    4. `Code`: Use backticks `` ` `` around inline code or triple backticks for code blocks (e.g., `` `code` ``).
+    5. Lists:
+    - Unordered: Use `-` or `*` for bullet points (e.g., `-` - no space before).
+    - Ordered: Use numbers followed by a period (e.g., `1.` - no space before).
+    6. <https://example.com|Links>: Format as `<URL|Link Text>`.
+
+    **Header Limitations:**
+    - Slack does not support headers. Use bold or asterisks for emphasis.
+
     ---
     """
 

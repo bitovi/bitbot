@@ -2,6 +2,8 @@ name: Deploy n8n
 on:
   push:
     branches: [ n8n ]
+    paths:
+      - '.github/workflows/deploy-n8n.yaml'
 
 jobs:
   EC2-Deploy:
@@ -24,7 +26,7 @@ jobs:
           aws_r53_enable_cert: true
           aws_r53_create_root_cert: true
 
-          #aws_elb_app_port: 5678
+          aws_elb_app_port: 5678
           #aws_elb_healthcheck: "HTTP:5678/"  # ?
 
           docker_repo_app_directory: "n8n/lite"

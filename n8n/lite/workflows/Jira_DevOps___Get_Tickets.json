@@ -1,0 +1,64 @@
+{
+  "name": "Jira DevOps - Get Tickets",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "6e8d5e27-667e-45e8-853a-706befb93128",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        700,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "options": {
+          "jql": "project = DEVOPS AND status NOT IN (Completed, Canceled, Closed)"
+        }
+      },
+      "id": "f78df327-4d9f-4b6a-a466-36e11b7841ce",
+      "name": "Jira Software",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        920,
+        360
+      ],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "Rpu2R0XXhWsBoA7c",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Jira Software",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b78e71c6-1473-4455-9435-2e639a45a234",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2c9caba031a880101033ab2e84c0deb53a01ceeef89bd61632a16734d66455f"
+  },
+  "id": "51qG4uMNy9g1UxFL",
+  "tags": []
+}

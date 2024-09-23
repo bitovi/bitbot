@@ -1,0 +1,103 @@
+{
+  "name": "child test - parent",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "963d07f7-2213-4c0c-be65-418b68bca272",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        820,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Fq4Q3W5C1IOma5AC",
+          "mode": "list",
+          "cachedResultName": "child test - child"
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "fc4ac32c-326a-4326-9137-a020c01b573a",
+      "name": "Execute Workflow",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0d4c02e4-5103-4cf9-9a75-4d29a53b4399",
+              "name": "email",
+              "value": "mick@bitovi.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0bd5974f-4648-4875-98e2-d8637e663c36",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        380
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bf530af3-c6da-4790-9c90-6d37dccdf419",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2c9caba031a880101033ab2e84c0deb53a01ceeef89bd61632a16734d66455f"
+  },
+  "id": "E5SbiwfiaThtYB7b",
+  "tags": [
+    {
+      "createdAt": "2024-09-10T13:40:28.146Z",
+      "updatedAt": "2024-09-10T13:40:28.146Z",
+      "id": "RGFPzbuzJ3fHIhnF",
+      "name": "test"
+    }
+  ]
+}

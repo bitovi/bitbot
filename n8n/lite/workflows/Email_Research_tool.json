@@ -1,0 +1,513 @@
+{
+  "name": "Email Research tool",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Input\nGet the email :tada:",
+        "height": 421.8455650963256,
+        "width": 393.38472842465717
+      },
+      "id": "227e3bd3-38f3-4925-a886-f342ef0be1b3",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2460,
+        460
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "Precise here the format in which you need the data to be ",
+        "height": 360.86980611795576,
+        "width": 300.49399096535876
+      },
+      "id": "0342879f-77f1-48ed-9b95-9cf1823c65f6",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3980,
+        860
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"email\": {\n      \"type\": \"string\"\n    },\n    \"full_name\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"linkedin_info\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"profile_url\": {\n          \"type\": [\"string\", \"null\"]\n        },\n        \"current_position\": {\n          \"type\": [\"string\", \"null\"]\n        },\n        \"recent_posts\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"content\": {\n                \"type\": \"string\"\n              },\n              \"url\": {\n                \"type\": \"string\"\n              },\n              \"date\": {\n                \"type\": \"string\",\n                \"format\": \"date\"\n              }\n            }\n          }\n        },\n        \"groups\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"string\"\n          }\n        }\n      }\n    },\n    \"blog_articles\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"title\": {\n            \"type\": \"string\"\n          },\n          \"url\": {\n            \"type\": \"string\"\n          },\n          \"date\": {\n            \"type\": \"string\",\n            \"format\": \"date\"\n          }\n        }\n      }\n    },\n    \"company\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"name\": {\n          \"type\": [\"string\", \"null\"]\n        },\n        \"industry\": {\n          \"type\": [\"string\", \"null\"]\n        },\n        \"size\": {\n          \"type\": [\"string\", \"null\"]\n        },\n        \"website\": {\n          \"type\": [\"string\", \"null\"]\n        },\n        \"linkedin_url\": {\n          \"type\": [\"string\", \"null\"]\n        }\n      }\n    },\n    \"company_leaders\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"name\": {\n            \"type\": \"string\"\n          },\n          \"position\": {\n            \"type\": \"string\"\n          },\n          \"linkedin_url\": {\n            \"type\": [\"string\", \"null\"]\n          }\n        }\n      }\n    },\n    \"final_summary\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"lead_potential\": {\n          \"type\": \"string\",\n          \"enum\": [\"high\", \"medium\", \"low\"]\n        },\n        \"assessment\": {\n          \"type\": \"string\"\n        },\n        \"recommended_action\": {\n          \"type\": \"string\"\n        }\n      },\n      \"required\": [\"lead_potential\", \"assessment\"]\n    }\n  },\n  \"required\": [\"email\", \"final_summary\"]\n}"
+      },
+      "id": "c51cd79c-9a17-4c2a-87f2-e105e5e08ee9",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        4120,
+        1060
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "name": "web_search",
+        "description": "Call this tool to search the web (it's duckduckgo)",
+        "workflowId": {
+          "__rl": true,
+          "value": "EsY7CuwrGwH0kB50",
+          "mode": "list",
+          "cachedResultName": "duckduckgo-search-tool"
+        },
+        "specifyInputSchema": true,
+        "jsonSchemaExample": "{\n\t\"query\": \"some_value\"\n}"
+      },
+      "id": "ebcb287b-a5c4-4166-adef-b22e9c15dd0a",
+      "name": "Duckduckgo Web Search",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3600,
+        1060
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "### Ask AI what are the information you are looking for about the email",
+        "height": 279.8787004666023,
+        "width": 300.49399096535876
+      },
+      "id": "5f784420-1696-4d7c-ba6f-bd76c84528ca",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3560,
+        440
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "name": "get_website_content",
+        "description": "This tool will return the text from the given URL. ",
+        "workflowId": "hlPhXlpJ9uXUVTqK",
+        "responsePropertyName": "body",
+        "specifyInputSchema": true,
+        "jsonSchemaExample": "{\n\t\"url\": \"https://www.lemlist.com\"\n}"
+      },
+      "id": "ab950f55-2bf0-4ae7-995d-31da3209420f",
+      "name": "Get website content",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        3800,
+        1060
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "f294df58-0c9a-4f54-bd4d-70dfccbbb754",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        3400,
+        1060
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "x9H6qxoL1wtsRD3b",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "27cfccbc-22e5-40e6-a32f-f04cab2c3ec8",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "hhxpkHaShBHTFNuk",
+          "mode": "list",
+          "cachedResultName": "Hubspot Email Research Tool"
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "4dfc3dc0-d4a3-49b7-9377-709b528efe11",
+      "name": "Hubspot contact lookup",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        3880,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={ \"query\": { \"email\": \"{{ $json.email }}\" }}",
+        "options": {}
+      },
+      "id": "b6184b32-8ee4-4264-8389-910bc5dfdcfb",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3680,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nreturn {\n  \"agent_response\": $input.first().json.output,\n  \"hubspot_contact\": $input.last().json.response\n}"
+      },
+      "id": "a71ae955-ef59-4de5-baa7-907e27e1eb76",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5060,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "foo",
+        "joinMode": "keepEverything",
+        "options": {}
+      },
+      "id": "d7beff60-4615-4c65-891e-fbc23850dcfe",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        4840,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Given an email address, conduct comprehensive research to gather information about the individual and their company. Focus on determining if they are a potential lead for our software development services (front-end, back-end, JavaScript, Python, DevOps, UX, and product development).\n\nstrict requirement: ONLY OUTPUT JSON!\n\n## Research Steps:\n\n1. Find the individual's LinkedIn profile\n   - Always get the linkedin profile url from the a google search like \"linkedin - {email}\"\n   - Note their full name and current position\n   - Collect recent posts, group memberships, and any published content by the individual (only fall back to company posts if none found for the individual)\n\n2. Research the company\n   - Identify name, industry, size, and website\n   - Find the company's LinkedIn page\n\n3. Identify key company leaders\n   - Focus on C-level executives, VPs, and department heads related to technology\n\n4. Look for blog articles or publications by the individual\n   - Collect titles, URLs, and publication dates\n\n## Data Sources\n- Use a web request to google.com to perform a google search\n- Use Hubspot to look up a contact by email\n\n## Data Collection:\n\nOrganize the collected information into the following structure:\n\n```json\n{\n  \"email\": \"example@company.com\",\n  \"full_name\": \"John Doe\",\n  \"linkedin_info\": {\n    \"profile_url\": \"https://www.linkedin.com/in/johndoe\",\n    \"current_position\": \"Senior Developer\",\n    \"recent_posts\": [\n      {\n        \"content\": \"Just launched our new product!\",\n        \"url\": \"https://www.linkedin.com/posts/mickmcgrath13_applied-llms-mastery-2024-notion-activity-7202034746384621568-Br5v?utm_source=share&utm_medium=member_desktop\n        \"date\": \"2024-09-01\"\n      }\n    ],\n    \"groups\": [\"JavaScript Developers\", \"Tech Innovators\"]\n  },\n  \"blog_articles\": [\n    {\n      \"title\": \"The Future of Web Development\",\n      \"url\": \"https://blog.example.com/future-web-dev\",\n      \"date\": \"2024-08-15\"\n    }\n  ],\n  \"company\": {\n    \"name\": \"Tech Innovations Inc.\",\n    \"industry\": \"Software Development\",\n    \"size\": \"51-200 employees\",\n    \"website\": \"https://techinnovations.com\",\n    \"linkedin_url\": \"https://www.linkedin.com/company/techinnovations\"\n  },\n  \"company_leaders\": [\n    {\n      \"name\": \"Jane Smith\",\n      \"position\": \"CTO\",\n      \"linkedin_url\": \"https://www.linkedin.com/in/janesmith\"\n    }\n  ],\n  \"hubspot_contact_details\": { ...be thorough... }\n  \"final_summary\": {\n    \"lead_potential\": \"high\",\n    \"assessment\": \"John works for ..., and they clearly have a need for Bitovi's services for these reasons\",\n    \"recommended_action\": \"Email with something like the following: ...\"\n  }\n}\n```\n\n## Final Assessment:\n\nBased on the collected information, provide an assessment of whether this individual and their company appear to be a good lead for our services. Consider factors such as:\n\n- The individual's role and influence in technology decisions\n- The company's size and industry relevance\n- Any mentioned technology challenges or initiatives that align with our services\n\nPresent your findings and assessment in a clear, concise manner.\n\nHere is the email: {{ $json.email }}",
+        "hasOutputParser": true,
+        "options": {
+          "maxIterations": 10
+        }
+      },
+      "id": "ebbf4e57-3578-4a49-b456-102335a8073d",
+      "name": "AI company researcher",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3580,
+        580
+      ],
+      "typeVersion": 1.6
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "email": "kpicard@digitalocean.com"
+        }
+      }
+    ],
+    "Hubspot contact lookup": [
+      {
+        "json": {
+          "response": {
+            "Name": "Karl Picard",
+            "Email": "kpicard@digitalocean.com",
+            "LifecycleStage": "lead",
+            "CreateDate": "2024-06-26",
+            "LastModifiedDate": "2024-09-10",
+            "HubSpotOwnerId": "12867190",
+            "LastSalesActivityDate": "2024-08-27",
+            "LastSalesActivityType": "EMAIL_OPEN",
+            "NumberOfPageViews": "0",
+            "NumberOfWebsiteVisits": "0",
+            "IsContact": "true",
+            "IsUnworked": "false",
+            "TimeToFirstEngagement": "11157",
+            "FirstOutreachDate": "2024-06-26",
+            "FirstEngagementDate": "2024-06-26",
+            "FirstEngagementObjectType": "EMAIL",
+            "FirstEngagementObjectId": "55187499092",
+            "LastSalesEmailOpenDate": "2024-08-27",
+            "LastSalesEmailReplyDate": "2024-08-15",
+            "NumberOfNotes": "16",
+            "NumberOfContactedNotes": "13",
+            "LastContactedDate": "2024-09-10",
+            "LastNotesUpdateDate": "2024-09-10",
+            "LatestMeetingActivity": "2024-08-19",
+            "AssociatedCompany": {
+              "Name": "Digital Ocean",
+              "Domain": "digitalocean.com",
+              "AnnualRevenue": "1000000000",
+              "NumberOfEmployees": "5000",
+              "Industry": "COMPUTER_SOFTWARE",
+              "Founded": "2011",
+              "City": "New York",
+              "State": "NY",
+              "Country": "United States",
+              "Phone": "+1 800-778-7879",
+              "Description": "DigitalOcean: Simplifying cloud infrastructure for developers with affordable SSD cloud servers and a range of services to accelerate innovation.",
+              "LinkedInUrl": "https://www.linkedin.com/company/digitalocean",
+              "FacebookUrl": "https://facebook.com/digitaloceancloudhosting",
+              "TwitterHandle": "digitalocean",
+              "TotalMoneyRaised": "305.4M",
+              "IsPublic": "true"
+            },
+            "ListMemberships": [
+              {
+                "ListId": 225,
+                "JoinDate": "2024-06-26"
+              },
+              {
+                "ListId": 228,
+                "JoinDate": "2024-06-26"
+              },
+              {
+                "ListId": 238,
+                "JoinDate": "2024-06-26"
+              },
+              {
+                "ListId": 241,
+                "JoinDate": "2024-06-26"
+              },
+              {
+                "ListId": 291,
+                "JoinDate": "2024-06-26"
+              },
+              {
+                "ListId": 374,
+                "JoinDate": "2024-06-26"
+              },
+              {
+                "ListId": 474,
+                "JoinDate": "2024-08-14"
+              },
+              {
+                "ListId": 483,
+                "JoinDate": "2024-06-26"
+              },
+              {
+                "ListId": 619,
+                "JoinDate": "2024-06-26"
+              },
+              {
+                "ListId": 961,
+                "JoinDate": "2024-08-21"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "AI company researcher": [
+      {
+        "json": {
+          "output": {
+            "email": "kpicard@digitalocean.com",
+            "full_name": "Karl Picard",
+            "linkedin_info": {
+              "profile_url": "https://www.linkedin.com/in/karlpicard",
+              "current_position": "Senior Director Engineering, Platform Engineering at DigitalOcean",
+              "recent_posts": [
+                {
+                  "content": "Are you using #AI, #ML, and #OpenSearch to their full potential? Join our cloud and AI specialists at 9 am PT on 9/25 as they provide an in-depth…",
+                  "url": "https://www.linkedin.com/posts/digitalocean_ai-ml-opensearch-activity-7235328426511904768-Chkd",
+                  "date": "2024-09-01"
+                },
+                {
+                  "content": "Securing access controls in your infrastructure can be a challenge. With new #predefinedroles for #DigitalOcean #RBAC you can reduce risks by…",
+                  "url": "https://www.linkedin.com/posts/digitalocean_predefinedroles-digitalocean-rbac-activity-7234994076712886272-XZeZ",
+                  "date": "2024-08-28"
+                },
+                {
+                  "content": "Mind the gap? Nah, mind the data! 🚀 DigitalOcean Spaces has landed in London, closing the distance between your data and UK/EU users. Faster…",
+                  "url": "https://www.linkedin.com/posts/wadewegner_mind-the-gap-nah-mind-the-data-activity-7235064753763598338-gEou",
+                  "date": "2024-08-25"
+                }
+              ],
+              "groups": []
+            },
+            "company": {
+              "name": "DigitalOcean",
+              "industry": "Software Development",
+              "size": "1,001-5,000 employees",
+              "website": "http://www.digitalocean.com",
+              "linkedin_url": "https://www.linkedin.com/company/digitalocean"
+            },
+            "company_leaders": [
+              {
+                "name": "Jim Ash",
+                "position": "Senior Partnership Development Manager | Strategic Alliances",
+                "linkedin_url": "https://www.linkedin.com/in/jameswash"
+              },
+              {
+                "name": "Adam Israel",
+                "position": "Senior Software Engineer",
+                "linkedin_url": "https://ca.linkedin.com/in/adamisrael"
+              },
+              {
+                "name": "Altaf Qureshi",
+                "position": "",
+                "linkedin_url": "https://uk.linkedin.com/in/altaf-qureshi-41a116"
+              },
+              {
+                "name": "Larry D'Angelo",
+                "position": "",
+                "linkedin_url": "https://www.linkedin.com/in/larry-d-angelo-a17156"
+              }
+            ],
+            "final_summary": {
+              "lead_potential": "high",
+              "assessment": "Karl Picard is the Senior Director of Engineering, Platform Engineering at DigitalOcean, a company specializing in software development and cloud computing services. DigitalOcean is a large company with over 1,000 employees, making it a significant player in the industry. Karl's role and recent activities indicate a strong focus on AI, ML, and cloud infrastructure, which aligns well with our software development services. The company's ongoing initiatives and Karl's leadership position suggest a high potential for collaboration.",
+              "recommended_action": "Email Karl Picard with a personalized message highlighting how our software development services can support DigitalOcean's AI, ML, and cloud infrastructure projects. Mention recent posts and initiatives to show relevance and understanding of their current focus areas."
+            }
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI company researcher",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duckduckgo Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI company researcher",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get website content": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI company researcher",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI company researcher",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI company researcher",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Hubspot contact lookup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hubspot contact lookup": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI company researcher": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b5ae720d-8b10-41bd-a9b2-97246f11a835",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2c9caba031a880101033ab2e84c0deb53a01ceeef89bd61632a16734d66455f"
+  },
+  "id": "dM2SQoOdwaXWVOAy",
+  "tags": [
+    {
+      "createdAt": "2024-09-11T06:01:52.515Z",
+      "updatedAt": "2024-09-11T06:01:52.515Z",
+      "id": "dvr0URptrQjpgFWt",
+      "name": "tool"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "name": "child test - child",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "674249ee-982a-453a-8a6f-a4f4980c56d9",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        820,
+        380
+      ],
+      "notesInFlow": true,
+      "notes": "When triggered by another workflow\n"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#bitbot-testing",
+          "mode": "name"
+        },
+        "text": "=Hello from Child workflow: {{ $json.email }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "277099b0-f48f-44c0-b58d-f0bc2a9390f1",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1000,
+        380
+      ],
+      "credentials": {
+        "slackApi": {
+          "id": "NkDWa3KbQtVjPYEc",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6bdb94ae-ebc4-4b6b-8415-b6701d84fe7c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2c9caba031a880101033ab2e84c0deb53a01ceeef89bd61632a16734d66455f"
+  },
+  "id": "Fq4Q3W5C1IOma5AC",
+  "tags": []
+}

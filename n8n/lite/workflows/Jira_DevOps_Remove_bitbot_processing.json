@@ -1,0 +1,258 @@
+{
+  "name": "Jira DevOps Remove bitbot-processing",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "779f03ce-bed4-413d-b0bb-855042f320f4",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        700,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "options": {
+          "jql": "project = DEVOPS AND (labels IN (\"bitbot-processing\",\"bitbot-processing-done\"))"
+        }
+      },
+      "id": "78728bec-ff05-4a5a-90c2-92fb2e8d8aff",
+      "name": "Jira Software",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        880,
+        360
+      ],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "Rpu2R0XXhWsBoA7c",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://bitovi.atlassian.net/rest/api/3/issue/{{ $json.key }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "jiraSoftwareCloudApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"update\": {\n    \"labels\": [\n      {\n        \"remove\": \"bitbot-processing\"\n      },\n      {\n        \"remove\": \"bitbot-processing-done\"\n      }\n    ]\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "e930e803-5e2b-4c7e-974a-36f9c519a7bb",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1080,
+        360
+      ],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "Rpu2R0XXhWsBoA7c",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "a5ad2e60-949f-4281-a7a7-560abe987a66",
+      "name": "Embeddings OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        580
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "x9H6qxoL1wtsRD3b",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "{}",
+        "options": {}
+      },
+      "id": "5c5bd101-294c-4cfb-bc5a-b08c41f0fc97",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "separator": "\\n"
+      },
+      "id": "ba27c2e5-be69-43a7-a5e4-a82ea16831b4",
+      "name": "Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return {};"
+      },
+      "id": "6043e87e-d693-4157-b3e8-5575e8baec4a",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": "jira-devops",
+        "clearStore": true
+      },
+      "id": "85b983a6-70fc-4440-a6c6-f5ec9f70e223",
+      "name": "In-Memory Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        360
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Jira Software",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira Software": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "In-Memory Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "In-Memory Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "In-Memory Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3f680f93-987a-40cc-9916-b8cd8797b40b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2c9caba031a880101033ab2e84c0deb53a01ceeef89bd61632a16734d66455f"
+  },
+  "id": "wRk9hDVbJvZ7fVyO",
+  "tags": [
+    {
+      "createdAt": "2024-09-10T13:40:28.146Z",
+      "updatedAt": "2024-09-10T13:40:28.146Z",
+      "id": "RGFPzbuzJ3fHIhnF",
+      "name": "test"
+    }
+  ]
+}

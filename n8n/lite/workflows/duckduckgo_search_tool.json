@@ -1,0 +1,93 @@
+{
+  "name": "duckduckgo-search-tool",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "80e9f4ce-88a9-498f-9fe2-820306060466",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        820,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.query }}",
+        "safeSearch": -1
+      },
+      "id": "776850e4-5657-4ebf-8fb5-9ffe8e174840",
+      "name": "DuckDuckGo",
+      "type": "n8n-nodes-duckduckgo.duckDuckGoNode",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        380
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "5de8cb0a-0869-48e9-879a-f7cdfbd5b3cd",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        380
+      ],
+      "webhookId": "a6d76b51-8dec-45af-ad18-f24767e5048c"
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "mick@bitovi.com"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "DuckDuckGo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1c6fbe5f-2d35-4203-aaea-1b9ce5e50a49",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2c9caba031a880101033ab2e84c0deb53a01ceeef89bd61632a16734d66455f"
+  },
+  "id": "EsY7CuwrGwH0kB50",
+  "tags": [
+    {
+      "createdAt": "2024-09-11T06:01:52.515Z",
+      "updatedAt": "2024-09-11T06:01:52.515Z",
+      "id": "dvr0URptrQjpgFWt",
+      "name": "tool"
+    }
+  ]
+}

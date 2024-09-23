@@ -1,0 +1,527 @@
+{
+  "name": "Email Research Workflow Threaded",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f75604d0-aead-4c15-82fc-9db6fb285922",
+      "name": "SerpAPI - Search Google",
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "position": [
+        2660,
+        1340
+      ],
+      "typeVersion": 1,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## Read Me\n\nThis workflow allows you to do account research with the web using AI.\n\nThe advanced AI module has 2 capabilities: \n- Research Google using SerpAPI\n- Visit and get website content using a sub-workflow\n\n\nFrom an unstructured input like a domain or a company name. \n\nIt will return the following properties: \n- domain\n- company Linkedin Url\n- cheapest plan\n- has free trial\n- has entreprise plan\n- has API\n- market (B2B or B2C)\n\n\nThe strength of n8n here is that you can adapt this workflow to research whatever information you need.\n\nYou just have to precise it in the prompt and to precise the output format in the \"Strutured Output Parser\" module.\n\n[Click here to find more detailed instructions with video guide.](https://lempire.notion.site/AI-Web-research-with-n8n-a25aae3258d0423481a08bd102f16906)\n",
+        "height": 658.0614601225933,
+        "width": 409.0131656322444
+      },
+      "id": "eae465ca-8c75-4632-97b4-3179df3cb6d2",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1600,
+        20
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "Get your free API key here https://serpapi.com/",
+        "height": 276.9940915275391
+      },
+      "id": "5d79d8d4-10ef-4abf-b426-741b6999d863",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2580,
+        1240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "id": "292f24d0-76a0-411a-8983-862785eef1be",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        1820,
+        1380
+      ],
+      "typeVersion": 1.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "name": "search_google",
+        "description": "Call this tool to get results from a google search.",
+        "source": "parameter",
+        "workflowJson": "{\n  \"meta\": {\n    \"templateCredsSetupCompleted\": true,\n    \"instanceId\": \"2b1cc1a8b0a2fb9caab11ab2d5eb3712f9973066051b2e898cf4041a1f2a7757\"\n  },\n  \"nodes\": [\n    {\n      \"parameters\": {},\n      \"id\": \"fbb17d8d-e2dc-46ae-aba4-8c27cc9d8766\",\n      \"name\": \"Execute Workflow Trigger\",\n      \"type\": \"n8n-nodes-base.executeWorkflowTrigger\",\n      \"typeVersion\": 1,\n      \"position\": [\n        20,\n        460\n      ]\n    },\n    {\n      \"parameters\": {\n        \"url\": \"https://app.scrapingbee.com/api/v1/store/google\",\n        \"authentication\": \"genericCredentialType\",\n        \"genericAuthType\": \"httpQueryAuth\",\n        \"sendQuery\": true,\n        \"queryParameters\": {\n          \"parameters\": [\n            {\n              \"name\": \"search\",\n              \"value\": \"={{ $json.query.google_search_query }}\"\n            },\n            {\n              \"name\": \"language\",\n              \"value\": \"en\"\n            },\n            {\n              \"name\": \"nb_results\",\n              \"value\": \"5\"\n            }\n          ]\n        },\n        \"options\": {}\n      },\n      \"id\": \"b938a2bd-030e-46d7-adee-4e3c85cfc1b3\",\n      \"name\": \"Search Google\",\n      \"type\": \"n8n-nodes-base.httpRequest\",\n      \"typeVersion\": 4.2,\n      \"position\": [\n        300,\n        460\n      ],\n      \"credentials\": {\n        \"httpQueryAuth\": {\n          \"id\": \"Pb2CIMT0tN838QPy\",\n          \"name\": \"ScrapingBee\"\n        }\n      }\n    },\n    {\n      \"parameters\": {\n        \"assignments\": {\n          \"assignments\": [\n            {\n              \"id\": \"096fee70-444e-4948-816c-752b20786062\",\n              \"name\": \"response\",\n              \"value\": \"={{ $json.organic_results }}\",\n              \"type\": \"array\"\n            }\n          ]\n        },\n        \"options\": {}\n      },\n      \"id\": \"c5db1fb6-d875-47d2-97db-287777583f22\",\n      \"name\": \"Response\",\n      \"type\": \"n8n-nodes-base.set\",\n      \"typeVersion\": 3.3,\n      \"position\": [\n        520,\n        460\n      ]\n    }\n  ],\n  \"connections\": {\n    \"Execute Workflow Trigger\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Search Google\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Search Google\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Response\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    }\n  },\n  \"pinData\": {\n    \"Execute Workflow Trigger\": [\n      {\n        \"query\": {\n          \"google_search_query\": \"site:lemlist.com pricing\"\n        }\n      }\n    ]\n  }\n}",
+        "specifyInputSchema": true,
+        "jsonSchemaExample": "{\n\t\"google_search_query\": \"site:lemlist.com pricing\"\n}"
+      },
+      "id": "38599c71-cc8a-4ed7-a8d3-da3a56f38470",
+      "name": "Search Google with ScrapingBee",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "position": [
+        2960,
+        1400
+      ],
+      "typeVersion": 1.1,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "Instead of SERP API module, you can also use this custom module for ScrapingBee. It is more cost-efficient.\n\nGet your free API key here https://www.scrapingbee.com/",
+        "height": 374.0352439405913
+      },
+      "id": "80b4b26a-268e-458a-8ccf-a4f65e3f2be6",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2880,
+        1200
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# Input\nGet the email :tada:",
+        "height": 421.8455650963256,
+        "width": 393.38472842465717
+      },
+      "id": "e92a6492-2c5a-42d5-9007-8b0d4ebc3c66",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2180,
+        100
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# TODO: Timer trigger\nOn a timer, get emails from a google doc or spreadsheet",
+        "height": 333.8263184006576,
+        "width": 393.38472842465717
+      },
+      "id": "eb93ead0-0d91-465f-9b31-65c050832a13",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1780,
+        1220
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert"
+            }
+          ]
+        }
+      },
+      "id": "3d41751c-28b1-41be-89f4-0b29b1e21736",
+      "name": "Google Docs",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        1380
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c069d982-86b8-4bb0-837d-abda80799316",
+              "name": "email",
+              "value": "lakshmik@sentinelone.com",
+              "type": "string"
+            },
+            {
+              "id": "d8f70572-bc74-4970-9035-fb6b272e74c3",
+              "name": "slack_channel",
+              "value": "#bitbot-email-research",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "752b02ad-6bde-401d-b105-fa392b7e1626",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2760,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "content": "duckduckgo is free :)\ngotta sub-workflow the node, though, if we want to use it as a tool",
+        "height": 336.0517611559202
+      },
+      "id": "3d6f11d9-b48f-4a49-a677-e92538f862c0",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2260,
+        1220
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "c20d4637-e750-4725-b267-9da42ba38114",
+      "name": "DuckDuckGo",
+      "type": "n8n-nodes-duckduckgo.duckDuckGoNode",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        1340
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "path": "85014383-6dff-402f-8be9-2b1155ce7499",
+        "formTitle": "Email Research Bot",
+        "formDescription": "Provide an email, and we'll create a detailed report!",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d5274eb4-ec31-439f-97f0-23749c54b590",
+      "name": "n8n Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        2360,
+        140
+      ],
+      "webhookId": "85014383-6dff-402f-8be9-2b1155ce7499",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "id": "9b558747-6a17-4648-b2eb-a363b4a0676c",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        2360,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "dM2SQoOdwaXWVOAy",
+          "mode": "list",
+          "cachedResultName": "Email Research tool"
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "id": "abc43b9b-c016-4f3f-bc5a-56c1df00f8e6",
+      "name": "Email Researcher",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        3460,
+        -60
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "function convertLeadToSlackBlocks(leadData) {\n  const blocks = [];\n\n  // Header section\n  blocks.push({\n    type: 'header',\n    text: {\n      type: 'plain_text',\n      text: `👤 Lead Information: ${leadData.full_name || leadData.email}`,\n      emoji: true\n    }\n  });\n\n  // Basic Information\n  blocks.push({\n    type: 'section',\n    fields: [\n      {\n        type: 'mrkdwn',\n        text: `*Email:* ${leadData.email}`\n      },\n      {\n        type: 'mrkdwn',\n        text: `*Name:* ${leadData.full_name || 'N/A'}`\n      }\n    ]\n  });\n\n  // HubSpot Data\n  if (leadData.hubspot_data) {\n    blocks.push({ 'type': 'divider' });\n    blocks.push({\n      type: 'section',\n      text: {\n        type: 'mrkdwn',\n        text: '*📊 HubSpot Data*'\n      }\n    });\n\n    const hubspotFields = [\n      { type: 'mrkdwn', text: `*Lifecycle Stage:* ${leadData.hubspot_data.LifecycleStage || 'N/A'}` },\n      { type: 'mrkdwn', text: `*Created:* ${leadData.hubspot_data.CreateDate || 'N/A'}` },\n      { type: 'mrkdwn', text: `*Last Modified:* ${leadData.hubspot_data.LastModifiedDate || 'N/A'}` },\n      { type: 'mrkdwn', text: `*Last Sales Activity:* ${leadData.hubspot_data.LastSalesActivityDate || 'N/A'} (${leadData.hubspot_data.LastSalesActivityType || 'N/A'})` },\n      { type: 'mrkdwn', text: `*Is Unworked:* ${leadData.hubspot_data.IsUnworked || 'N/A'}` },\n      { type: 'mrkdwn', text: `*First Engagement:* ${leadData.hubspot_data.FirstEngagementDate || 'N/A'} (${leadData.hubspot_data.FirstEngagementObjectType || 'N/A'})` },\n      { type: 'mrkdwn', text: `*Last Contacted:* ${leadData.hubspot_data.LastContactedDate || 'N/A'}` },\n      { type: 'mrkdwn', text: `*Latest Meeting:* ${leadData.hubspot_data.LatestMeetingActivity || 'N/A'}` }\n    ];\n\n    // Split HubSpot fields into two columns\n    const midpoint = Math.ceil(hubspotFields.length / 2);\n    blocks.push({\n      type: 'section',\n      fields: hubspotFields.slice(0, midpoint)\n    });\n    blocks.push({\n      type: 'section',\n      fields: hubspotFields.slice(midpoint)\n    });\n\n    // Associated Company\n    if (leadData.hubspot_data.AssociatedCompany) {\n      blocks.push({\n        type: 'section',\n        text: {\n          type: 'mrkdwn',\n          text: '*🏢 Associated Company*'\n        }\n      });\n\n      const companyFields = [\n        { type: 'mrkdwn', text: `*Name:* ${leadData.hubspot_data.AssociatedCompany.Name || 'N/A'}` },\n        { type: 'mrkdwn', text: `*Domain:* ${leadData.hubspot_data.AssociatedCompany.Domain || 'N/A'}` },\n        { type: 'mrkdwn', text: `*Revenue:* $${(leadData.hubspot_data.AssociatedCompany.AnnualRevenue / 1000000).toFixed(1)}M` },\n        { type: 'mrkdwn', text: `*Employees:* ${leadData.hubspot_data.AssociatedCompany.NumberOfEmployees || 'N/A'}` },\n        { type: 'mrkdwn', text: `*Industry:* ${leadData.hubspot_data.AssociatedCompany.Industry || 'N/A'}` },\n        { type: 'mrkdwn', text: `*Founded:* ${leadData.hubspot_data.AssociatedCompany.Founded || 'N/A'}` },\n        { type: 'mrkdwn', text: `*Location:* ${[leadData.hubspot_data.AssociatedCompany.City, leadData.hubspot_data.AssociatedCompany.State, leadData.hubspot_data.AssociatedCompany.Country].filter(Boolean).join(', ')}` },\n        { type: 'mrkdwn', text: `*Phone:* ${leadData.hubspot_data.AssociatedCompany.Phone || 'N/A'}` }\n      ];\n\n      // Split company fields into two columns\n      const companyMidpoint = Math.ceil(companyFields.length / 2);\n      blocks.push({\n        type: 'section',\n        fields: companyFields.slice(0, companyMidpoint)\n      });\n      blocks.push({\n        type: 'section',\n        fields: companyFields.slice(companyMidpoint)\n      });\n\n      // Company description\n      if (leadData.hubspot_data.AssociatedCompany.Description) {\n        blocks.push({\n          type: 'section',\n          text: {\n            type: 'mrkdwn',\n            text: `*Description:* ${leadData.hubspot_data.AssociatedCompany.Description}`\n          }\n        });\n      }\n\n      // Company social links\n      const socialLinks = [];\n      if (leadData.hubspot_data.AssociatedCompany.LinkedInUrl) socialLinks.push(`<${leadData.hubspot_data.AssociatedCompany.LinkedInUrl}|LinkedIn>`);\n      if (leadData.hubspot_data.AssociatedCompany.FacebookUrl) socialLinks.push(`<${leadData.hubspot_data.AssociatedCompany.FacebookUrl}|Facebook>`);\n      if (leadData.hubspot_data.AssociatedCompany.TwitterHandle) socialLinks.push(`<https://twitter.com/${leadData.hubspot_data.AssociatedCompany.TwitterHandle}|Twitter>`);\n\n      if (socialLinks.length > 0) {\n        blocks.push({\n          type: 'context',\n          elements: [\n            {\n              type: 'mrkdwn',\n              text: `*Social:* ${socialLinks.join(' | ')}`\n            }\n          ]\n        });\n      }\n    }\n\n    // List Memberships\n    if (leadData.hubspot_data.ListMemberships && leadData.hubspot_data.ListMemberships.length > 0) {\n      blocks.push({\n        type: 'section',\n        text: {\n          type: 'mrkdwn',\n          text: `*📋 List Memberships:* ${leadData.hubspot_data.ListMemberships.map(list => list.ListId).join(', ')}`\n        }\n      });\n    }\n  }\n\n  // LinkedIn Information\n  if (leadData.linkedin_info) {\n    blocks.push({ 'type': 'divider' });\n    \n    blocks.push({\n      type: 'section',\n      text: {\n        type: 'mrkdwn',\n        text: '*🔗 LinkedIn Information*'\n      }\n    });\n\n    const linkedinFields = [\n      {\n        type: 'mrkdwn',\n        text: `*Profile:* ${leadData.linkedin_info.profile_url ? `<${leadData.linkedin_info.profile_url}|View Profile>` : 'N/A'}`\n      },\n      {\n        type: 'mrkdwn',\n        text: `*Current Position:* ${leadData.linkedin_info.current_position || 'N/A'}`\n      }\n    ];\n\n    if (leadData.linkedin_info.groups && leadData.linkedin_info.groups.length > 0) {\n      linkedinFields.push({\n        type: 'mrkdwn',\n        text: `*Groups:* ${leadData.linkedin_info.groups.join(', ')}`\n      });\n    }\n\n    blocks.push({\n      type: 'section',\n      fields: linkedinFields\n    });\n\n    // Recent LinkedIn Posts\n    if (leadData.linkedin_info.recent_posts && leadData.linkedin_info.recent_posts.length > 0) {\n      blocks.push({ 'type': 'divider' });\n      \n      blocks.push({\n        type: 'section',\n        text: {\n          type: 'mrkdwn',\n          text: '*📝 Recent LinkedIn Posts*'\n        }\n      });\n\n      leadData.linkedin_info.recent_posts.forEach(post => {\n        blocks.push({\n          type: 'section',\n          text: {\n            type: 'mrkdwn',\n            text: `• _${post.date}:_ ${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''} <${post.url}|(link)>`\n          }\n        });\n      });\n    }\n  }\n\n  // Blog Articles\n  if (leadData.blog_articles && leadData.blog_articles.length > 0) {\n    blocks.push({ 'type': 'divider' });\n    blocks.push({\n      type: 'section',\n      text: {\n        type: 'mrkdwn',\n        text: '*📚 Blog Articles*'\n      }\n    });\n\n    leadData.blog_articles.forEach(article => {\n      blocks.push({\n        type: 'section',\n        text: {\n          type: 'mrkdwn',\n          text: `• _${article.date}_: ${article.title} <${article.url}|(link)>`\n        }\n      });\n    });\n  }\n\n  // Company Information\n  if (leadData.company) {\n    blocks.push({ 'type': 'divider' });\n    blocks.push({\n      type: 'section',\n      text: {\n        type: 'mrkdwn',\n        text: '*🏢 Company Information*'\n      }\n    });\n\n    const companyFields = [\n      {\n        type: 'mrkdwn',\n        text: `*Name:* ${leadData.company.name || 'N/A'}`\n      },\n      {\n        type: 'mrkdwn',\n        text: `*Industry:* ${leadData.company.industry || 'N/A'}`\n      },\n      {\n        type: 'mrkdwn',\n        text: `*Size:* ${leadData.company.size || 'N/A'}`\n      },\n      {\n        type: 'mrkdwn',\n        text: `*Website:* ${leadData.company.website ? `<${leadData.company.website}|Visit Site>` : 'N/A'}`\n      },\n      {\n        type: 'mrkdwn',\n        text: `*LinkedIn:* ${leadData.company.linkedin_url ? `<${leadData.company.linkedin_url}|View Company>` : 'N/A'}`\n      }\n    ];\n\n    blocks.push({\n      type: 'section',\n      fields: companyFields\n    });\n  }\n\n  // Company Leaders\n  if (leadData.company_leaders && leadData.company_leaders.length > 0) {\n    blocks.push({ 'type': 'divider' });\n    blocks.push({\n      type: 'section',\n      text: {\n        type: 'mrkdwn',\n        text: '*👥 Company Leaders*'\n      }\n    });\n\n    leadData.company_leaders.forEach(leader => {\n      blocks.push({\n        type: 'section',\n        text: {\n          type: 'mrkdwn',\n          text: `• *${leader.name}* - ${leader.position}${leader.linkedin_url ? ` (<${leader.linkedin_url}|LinkedIn>)` : ''}`\n        }\n      });\n    });\n  }\n\n  // Final Summary\n  if (leadData.final_summary) {\n    blocks.push({ type: 'divider' });\n\n    blocks.push({\n      type: 'section',\n      text: {\n        type: 'mrkdwn',\n        text: '*🎯 Final Summary*'\n      }\n    });\n\n    const summaryEmoji = {\n      high: '🟢',\n      medium: '🟡',\n      low: '🔴'\n    };\n\n    blocks.push({\n      type: 'context',\n      elements: [\n        {\n          type: 'mrkdwn',\n          text: `*Lead Potential:* ${summaryEmoji[leadData.final_summary.lead_potential.toLowerCase()]} ${leadData.final_summary.lead_potential.toUpperCase()}`\n        }\n      ]\n    });\n\n    blocks.push({\n      type: 'section',\n      text: {\n        type: 'mrkdwn',\n        text: `*Assessment:* ${leadData.final_summary.assessment}`\n      }\n    });\n\n    if (leadData.final_summary.recommended_action) {\n      blocks.push({ type: 'divider' });\n      blocks.push({\n        type: 'section',\n        text: {\n          type: 'mrkdwn',\n          text: `*Recommended Action:*\\n> ${leadData.final_summary.recommended_action}`\n        }\n      });\n    }\n  }\n\n  return blocks;\n}\n\nlet obj = $input.item.json.agent_response;\n\nlet hubspot_data = $input.item.json.hubspot_contact;\n\nconsole.log(\"hubspot_data\");\nconsole.log(hubspot_data);\n\nconsole.log(\"attach hubspot_data to obj\")\nobj.hubspot_data = hubspot_data;\n\nconsole.log(\"\");\nconsole.log(\"obj after\", obj);\n\nreturn { \n  blocks: convertLeadToSlackBlocks(obj)\n}"
+      },
+      "id": "70663a51-0887-4dfb-9ff2-51152cba640f",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3920,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.slack_channel }}",
+          "mode": "name"
+        },
+        "text": "=Researching email: `{{ $json.email }}`",
+        "otherOptions": {
+          "includeLinkToWorkflow": true,
+          "mrkdwn": true
+        }
+      },
+      "id": "06060474-488f-43af-82f4-b3f344df508a",
+      "name": "Initial post",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        3020,
+        360
+      ],
+      "credentials": {
+        "slackApi": {
+          "id": "NkDWa3KbQtVjPYEc",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#bitbot-email-research",
+          "mode": "name"
+        },
+        "messageType": "block",
+        "blocksUi": "={\"blocks\": {{ $json.blocks.toJsonString() }}}",
+        "text": "Issue with blocks",
+        "otherOptions": {
+          "includeLinkToWorkflow": true,
+          "thread_ts": {
+            "replyValues": {
+              "thread_ts": "={{ $json.slack_thread_ts }}"
+            }
+          },
+          "mrkdwn": false
+        }
+      },
+      "id": "168a407e-f4a1-4588-9197-0d75d29dcdb2",
+      "name": "Final Response",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        4900,
+        140
+      ],
+      "credentials": {
+        "slackApi": {
+          "id": "NkDWa3KbQtVjPYEc",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nreturn {\n  \"blocks\": $input.first().json.blocks,\n  \"slack_thread_ts\": $input.last().json.message_timestamp\n}"
+      },
+      "id": "60d11d74-bdc7-4b8f-b2c1-06ac6fa0eae2",
+      "name": "Code1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4500,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "foo",
+        "joinMode": "keepEverything",
+        "options": {}
+      },
+      "id": "99f4b2ee-7d2b-4a0b-9727-f2392c44eaac",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        4280,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "801738a4-953e-479c-8e1f-d69012876099",
+              "name": "email",
+              "value": "={{ $('Edit Fields').item.json.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "03a84fe3-451f-433e-b380-abdcc395b288",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3280,
+        200
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Initial post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Email Researcher",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Researcher": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initial post": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Email Researcher",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fea2baed-8d69-4bbb-b9d5-edf512a5909e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2c9caba031a880101033ab2e84c0deb53a01ceeef89bd61632a16734d66455f"
+  },
+  "id": "PtGbB6Tfxo6M3CFf",
+  "tags": []
+}

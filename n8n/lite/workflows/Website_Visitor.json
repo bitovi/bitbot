@@ -1,0 +1,108 @@
+{
+  "name": "Website Visitor",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c9cb296d-4625-4b71-ac29-658b6870accc",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        460,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.query.url }}",
+        "options": {}
+      },
+      "id": "ec4894bf-be3f-4526-bfea-bd89ad6089c6",
+      "name": "Visit Website",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "body",
+              "cssSelector": "html",
+              "skipSelectors": "head"
+            }
+          ]
+        },
+        "options": {
+          "cleanUpText": true
+        }
+      },
+      "id": "88ad4bb7-8024-4d69-817e-c22e7e9cde20",
+      "name": "HTML",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        820,
+        460
+      ]
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": {
+            "url": "https://www.lemlist.com"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Visit Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Visit Website": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d0106cb8-728e-4f39-978e-c2f1ec195bf6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2c9caba031a880101033ab2e84c0deb53a01ceeef89bd61632a16734d66455f"
+  },
+  "id": "hlPhXlpJ9uXUVTqK",
+  "tags": [
+    {
+      "createdAt": "2024-09-11T06:01:52.515Z",
+      "updatedAt": "2024-09-11T06:01:52.515Z",
+      "id": "dvr0URptrQjpgFWt",
+      "name": "tool"
+    }
+  ]
+}

@@ -30,3 +30,4 @@ jobs:
           #aws_elb_healthcheck: "HTTP:5678/"  # ?
 
           docker_repo_app_directory: "n8n/lite"
+          

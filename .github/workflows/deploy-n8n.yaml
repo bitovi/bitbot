@@ -29,5 +29,8 @@ jobs:
           aws_elb_app_port: 5678
           #aws_elb_healthcheck: "HTTP:5678/"  # ?
 
+          aws_ec2_instance_root_vol_size: 250
+          aws_ec2_instance_root_vol_preserve: true
+
           docker_repo_app_directory: "n8n/lite"
           

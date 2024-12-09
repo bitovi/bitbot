@@ -4,6 +4,7 @@ on:
     branches: [ n8n ]
     paths:
       - '.github/workflows/deploy-n8n.yaml'
+      - 'n8n/lite/docker-compose.yaml'
 
 jobs:
   EC2-Deploy:
